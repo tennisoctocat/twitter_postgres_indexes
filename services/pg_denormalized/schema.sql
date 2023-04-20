@@ -1,5 +1,9 @@
 \set ON_ERROR_STOP on
 
+SET max_parallel_maintenance_workers TO 80;
+SET maintenance_work_mem TO '16 GB';
+
+
 BEGIN;
 
 --------------------------------------------------------------------------------    
@@ -10,6 +14,8 @@ CREATE TABLE tweets_jsonb (
     data JSONB
 );
 
+
+ALTER TABLE tweets_jsonb SET (parallel_workers = 80);
 --------------------------------------------------------------------------------    
 -- the views below represent normalized tables
 --------------------------------------------------------------------------------    
