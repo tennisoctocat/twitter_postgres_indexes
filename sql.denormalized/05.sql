@@ -24,7 +24,7 @@ SELECT '#' || (jsonb_array_elements(
             )->>'text'::TEXT) AS tag, count(DISTINCT data->>'id')
 FROM tweets_jsonb
 WHERE
-     data->'lang' ? 'en' AND
+    data->'lang' = '"en"'::jsonb AND
      to_tsvector('english', COALESCE(data->'extended_tweet'->>'full_text', data->>'text'))@@to_tsquery('english', 'coronavirus')
 GROUP BY tag
 ORDER BY count DESC, tag

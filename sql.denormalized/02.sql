@@ -22,17 +22,6 @@ explain select distinct a.data->>'id' FROM tweets_jsonb a JOIN tweets_jsonb b ON
 /* Works but is slow, idk what indices to make */
 
 
-/*
-select count(distinct a.data->>'id'), '#' || (jsonb_array_elements(
-                COALESCE(b.data->'entities'->'hashtags','[]') ||
-                COALESCE(b.data->'extended_tweet'->'entities'->'hashtags','[]')
-            )->>'text'::TEXT) AS tag
-        FROM tweets_jsonb a
-        JOIN tweets_jsonb b
-        ON (a.data->>'id') @@ (b.data ->>'id')
-        WHERE a.data->'entities' @> '{"hashtags": [{"text": "coronavirus"}]}' or a.data->'extended_tweet'->'entities' @> '{"hashtags": [{"text": "coronavirus"}]}' GROUP BY tag ORDER BY count DESC, tag LIMIT 1000;
-*/
-
 select '#' || (jsonb_array_elements(
                 COALESCE(data->'entities'->'hashtags','[]') ||
                 COALESCE(data->'extended_tweet'->'entities'->'hashtags','[]')
