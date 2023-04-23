@@ -24,8 +24,8 @@ SELECT '#' || (jsonb_array_elements(
             )->>'text'::TEXT) AS tag, count(DISTINCT data->>'id')
 FROM tweets_jsonb
 WHERE (to_tsvector('english', data->'extended_tweet'->>'full_text')@@to_tsquery('english', 'coronavirus')
-    OR to_tsvector('english', data->>'text')@@to_tsquery('english', 'coronavirus'))
-AND data->'lang' ? 'en'
+    OR (data->'extended_tweet'->>'full_text' IS NULL AND to_tsvector('english', data->>'text')@@to_tsquery('english', 'coronavirus')))
+    AND data->'lang' ? 'en'
 GROUP BY tag
 ORDER BY count DESC, tag
 LIMIT 1000;

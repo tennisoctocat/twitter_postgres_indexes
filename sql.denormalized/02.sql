@@ -33,9 +33,12 @@ select count(distinct a.data->>'id'), '#' || (jsonb_array_elements(
         WHERE a.data->'entities' @> '{"hashtags": [{"text": "coronavirus"}]}' or a.data->'extended_tweet'->'entities' @> '{"hashtags": [{"text": "coronavirus"}]}' GROUP BY tag ORDER BY count DESC, tag LIMIT 1000;
 */
 
-select count(distinct data->>'id'), '#' || (jsonb_array_elements(
+select '#' || (jsonb_array_elements(
                 COALESCE(data->'entities'->'hashtags','[]') ||
                 COALESCE(data->'extended_tweet'->'entities'->'hashtags','[]')
-            )->>'text'::TEXT) AS tag
+            )->>'text'::TEXT) AS tag, count(distinct data->>'id')
         FROM tweets_jsonb 
-        WHERE data->'entities' @> '{"hashtags": [{"text": "coronavirus"}]}' or data->'extended_tweet'->'entities' @> '{"hashtags": [{"text": "coronavirus"}]}' GROUP BY tag ORDER BY count DESC, tag LIMIT 1000;
+        WHERE data->'entities'->'hashtags' @> '[{"text": "coronavirus"}]' or data->'extended_tweet'->'entities'->'hashtags' @> '[{"text": "coronavirus"}]'
+        GROUP BY tag 
+        ORDER BY count DESC, tag 
+        LIMIT 1000;
